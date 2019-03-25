@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "957675275313",
+    "firebase_url": "https://survey-767a1.firebaseio.com",
+    "project_id": "survey-767a1",
+    "storage_bucket": "survey-767a1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:957675275313:android:ad59b61590116468",
+        "android_client_info": {
+          "package_name": "com.example.mhamedsayed.infractiontracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "957675275313-5ah9lu3r0lv3k1rtrk4qmeip6l5gafh3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mhamedsayed.infractiontracker",
+            "certificate_hash": "102c5c0adbd905ce6ad2cbdedfb6175e92b4be48"
+          }
+        },
+        {
+          "client_id": "957675275313-fanvcogbntfrkkrusv67pn811qpul86h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGSk4Rbip2ziBOQLFcRcn4wq7pyw_KcJE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "957675275313-fanvcogbntfrkkrusv67pn811qpul86h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

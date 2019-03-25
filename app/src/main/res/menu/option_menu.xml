@@ -1,0 +1,21 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/signOutItemMenu"
+        android:title="Sign Out"
+        app:showAsAction="withText" />
+
+    <item
+        android:id="@+id/GroupItemMenu"
+        android:title="Groups"
+        android:visible="false"
+        app:showAsAction="withText" />
+
+    <item
+        android:id="@+id/joinInGroupItemMenu"
+        android:title="Join in Group"
+        android:visible="false"
+        app:showAsAction="withText" />
+
+</menu>
