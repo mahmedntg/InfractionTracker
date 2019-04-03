@@ -1,7 +1,11 @@
 package com.example.khalifa.infractiontracker;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.view.menu.MenuBuilder;
@@ -9,12 +13,18 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.khalifa.infractiontracker.call.APICall;
 import com.example.khalifa.infractiontracker.utils.Group;
 import com.example.khalifa.infractiontracker.utils.GroupAdapter;
 import com.example.khalifa.infractiontracker.utils.GroupDetailsAdapter;
@@ -27,6 +37,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -34,7 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GroupDetailsActivity extends AppCompatActivity implements ValueEventListener {
+public class GroupDetailsActivity extends AppCompatActivity implements ValueEventListener, View.OnClickListener {
     private ImageView imageView;
     private TextView descriptionTV;
     private FirebaseAuth firebaseAuth;
@@ -45,6 +56,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements ValueEven
     private List<User> users;
     private GroupDetailsAdapter mAdapter;
     private boolean allowedToJoin;
+    EditText msg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +87,10 @@ public class GroupDetailsActivity extends AppCompatActivity implements ValueEven
         users = new ArrayList<>();
         mAdapter = new GroupDetailsAdapter(users, GroupDetailsActivity.this);
         recyclerView.setAdapter(mAdapter);
+        if (firebaseAuth.getCurrentUser().getUid().equals(group.getUserId())) {
+            findViewById(R.id.sendNote).setVisibility(View.VISIBLE);
+            findViewById(R.id.sendNote).setOnClickListener(this);
+        }
     }
 
     @Override
@@ -157,11 +173,72 @@ public class GroupDetailsActivity extends AppCompatActivity implements ValueEven
         data.put(firebaseAuth.getCurrentUser().getUid(), firebaseAuth.getCurrentUser().getEmail());
         reference.updateChildren(data);
         database.getReference(Reference.GROUPS + "/" + group.getKey()).child("totalUsers").setValue(group.getTotalUsers() + 1);
-        sendNotification();
+        FirebaseMessaging.getInstance().subscribeToTopic(group.getKey());
+        //  sendNotification();
     }
 
     private void sendNotification() {
 
+    }
+
+    private void sendNotificationToGroup() {
+        APICall apiCall
+                = new APICall();
+        apiCall.sendNoteToGroup(group.getKey(), "Announcement", msg.getText().toString());
+    }
+
+
+    public void openDialog() {
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+
+        // Set Custom Title
+        TextView title = new TextView(this);
+        // Title Properties
+        title.setText("Group Notification");
+        title.setPadding(10, 10, 10, 10);   // Set Position
+        title.setGravity(Gravity.CENTER);
+        title.setTextColor(Color.BLACK);
+        title.setTextSize(20);
+        alertDialog.setCustomTitle(title);
+
+        // Set Message
+        msg = new EditText(this);
+        // Message Properties
+        msg.setGravity(Gravity.CENTER_HORIZONTAL);
+        msg.setTextColor(Color.BLACK);
+        alertDialog.setView(msg);
+
+        // Set Button
+        // you can more buttons
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                sendNotificationToGroup();
+            }
+        });
+
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "CANCEL", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                alertDialog.hide();
+            }
+        });
+
+        new Dialog(getApplicationContext());
+        alertDialog.show();
+
+        // Set Properties for OK Button
+        final Button okBT = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        LinearLayout.LayoutParams neutralBtnLP = (LinearLayout.LayoutParams) okBT.getLayoutParams();
+        neutralBtnLP.gravity = Gravity.FILL_HORIZONTAL;
+        okBT.setPadding(50, 10, 10, 10);   // Set Position
+        okBT.setTextColor(Color.BLUE);
+        okBT.setLayoutParams(neutralBtnLP);
+
+        final Button cancelBT = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        LinearLayout.LayoutParams negBtnLP = (LinearLayout.LayoutParams) okBT.getLayoutParams();
+        negBtnLP.gravity = Gravity.FILL_HORIZONTAL;
+        cancelBT.setTextColor(Color.RED);
+        cancelBT.setLayoutParams(negBtnLP);
     }
 
     @Override
@@ -170,5 +247,10 @@ public class GroupDetailsActivity extends AppCompatActivity implements ValueEven
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.cancel();
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        openDialog();
     }
 }

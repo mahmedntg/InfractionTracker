@@ -4,13 +4,16 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.provider.SyncStateContract;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -33,6 +36,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +52,7 @@ public class AddInfractionActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     GPS_Service gps;
     private double latitude, longitude;
+    private String imageEncoded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +106,14 @@ public class AddInfractionActivity extends AppCompatActivity {
         progressDialog.show();
         // get location
         getLocation();
-
+        final DatabaseReference ref = databaseReference.push();
+        Infraction infraction = new Infraction(firebaseAuth.getCurrentUser().getUid(), name, solution, imageEncoded, categorySpinner.getSelectedItem().toString(), description, latitude, longitude);
+        infraction.setStatus(Status.PENDING.getValue());
+        infraction.setUserid_category(infraction.getUserId() + "__" + infraction.getCategory());
+        ref.setValue(infraction);
+        progressDialog.dismiss();
+        startActivity(new Intent(AddInfractionActivity.this, InfractionActivity.class));
+        /*
         StorageReference filePath = storageReference.child(uri.getLastPathSegment());
         final String userUid = firebaseAuth.getCurrentUser().getUid();
         filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -116,11 +128,11 @@ public class AddInfractionActivity extends AppCompatActivity {
                 progressDialog.dismiss();
                 startActivity(new Intent(AddInfractionActivity.this, InfractionActivity.class));
             }
-        });
+        });*/
     }
 
     public void imageBtnClicked(View view) {
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent galleryIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(galleryIntent, 1);
     }
 
@@ -128,10 +140,17 @@ public class AddInfractionActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            uri = data.getData();
+            Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
             imageBtn = (ImageButton) findViewById(R.id.storeImageBtn);
-            imageBtn.setImageURI(uri);
+            imageBtn.setImageBitmap(imageBitmap);
+            imageEncoded = encodeBitmapAndSaveToFirebase(imageBitmap);
         }
+    }
+
+    public String encodeBitmapAndSaveToFirebase(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
     }
 
     private void getLocation() {

@@ -21,7 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
-    EditText name, email, password, address, phone;
+    EditText name, email, password, confirm_password, phone;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseReference;
     private AlertDialog alertDialog;
@@ -49,13 +49,17 @@ public class RegisterActivity extends AppCompatActivity {
         email = findViewById(R.id.user_email);
         phone = findViewById(R.id.user_phone);
         password = findViewById(R.id.user_password);
-        address = findViewById(R.id.user_address);
+        confirm_password = findViewById(R.id.user_confirm_password);
         findViewById(R.id.register_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!name.getText().toString().equals("") && !email.getText().toString().equals("") && !phone.getText().toString().equals("") && !password.getText().toString().equals("") &&
-                        !address.getText().toString().equals("")) {
-                    register(email.getText().toString(), password.getText().toString(), phone.getText().toString(), address.getText().toString(), name.getText().toString());
+                        !confirm_password.getText().toString().equals("")) {
+                    if (!password.getText().toString().equals(confirm_password.getText().toString())) {
+                        Toast.makeText(getApplicationContext(), "Password and Confirm Password do not match", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    register(email.getText().toString(), password.getText().toString(), phone.getText().toString(), name.getText().toString());
                 } else {
                     Toast.makeText(getApplicationContext(), "Please fill all boxes", Toast.LENGTH_LONG).show();
                 }
@@ -63,7 +67,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private void register(final String email, String pass, final String phone, final String address, final String name) {
+    private void register(final String email, String pass, final String phone, final String name) {
         progressDialog.setMessage("Registering User...");
         progressDialog.show();
 
@@ -73,7 +77,7 @@ public class RegisterActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     String userId = firebaseAuth.getCurrentUser().getUid();
                     DatabaseReference ref = databaseReference.child(userId);
-                    User user = new User(name, email, phone, address);
+                    User user = new User(name, email, phone);
                     ref.setValue(user);
                     startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                 } else {

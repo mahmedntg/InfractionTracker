@@ -17,11 +17,10 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public User(String name, String email, String phone, String address) {
+    public User(String name, String email, String phone) {
         this.name = name;
         this.email = email;
         this.phone = phone;
-        this.address = address;
     }
 
     public String getName() {

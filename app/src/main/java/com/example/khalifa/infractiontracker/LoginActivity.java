@@ -4,8 +4,10 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +17,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.khalifa.infractiontracker.utils.Reference;
+import com.example.khalifa.infractiontracker.utils.SharedUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -79,12 +82,14 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    String userId = firebaseAuth.getCurrentUser().getUid();
+                    final String userId = firebaseAuth.getCurrentUser().getUid();
                     firebaseDatabase.getReference(Reference.USERS).child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
+                            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+                            String token = preferences.getString(SharedUtils.PREF_FCM_TOKEN, null);
+                            dataSnapshot.getRef().child("token").setValue(token);
                             startActivity(new Intent(LoginActivity.this, InfractionActivity
-
                                     .class));
                         }
 

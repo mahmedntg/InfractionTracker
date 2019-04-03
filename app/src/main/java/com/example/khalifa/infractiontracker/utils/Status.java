@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 
 public enum Status implements Serializable {
-    PENDING("Pending"), APPROVED("Approved"), REJECTED("Rejected");
+    PENDING("قيد الانتظار"), APPROVED("تمت الموافقة"), REJECTED("تم الرفض");
     private String value;
 
     Status(String value) {

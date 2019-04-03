@@ -3,6 +3,7 @@ package com.example.khalifa.infractiontracker;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -76,7 +78,20 @@ public class InfractionDetailsActivity extends AppCompatActivity implements View
         solutionTV.setText("Solution: " + infraction.getSolution());
         descriptionTV.setText("Description: " + infraction.getDescription());
 
-        Picasso.with(this).load(infraction.getImage()).into(imageView);
+        if (!infraction.getImage().contains("http")) {
+            try {
+                Bitmap imageBitmap = SharedUtils.decodeFromFirebaseBase64(infraction.getImage());
+                imageView.setImageBitmap(imageBitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+
+            Picasso.with(this).load(infraction.getImage()).into(imageView);
+        }
+        if (infraction.getSolution() == null || infraction.getSolution().equals("")) {
+            solutionTV.setVisibility(View.GONE);
+        }
         String email = firebaseAuth.getCurrentUser().getEmail();
         if (email.equals(SharedUtils.email)) {
             approve.setVisibility(View.VISIBLE);

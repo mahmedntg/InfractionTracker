@@ -16,7 +16,9 @@
             <ImageView
                 android:id="@+id/image"
                 android:layout_width="100dp"
-                android:layout_height="100dp" />
+                android:layout_height="100dp"
+                android:gravity="center|start"
+                android:scaleType="fitXY"/>
 
             <TextView
                 android:id="@+id/name"
@@ -25,7 +27,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="30dp"
                 android:layout_toRightOf="@+id/image"
-                android:text="infraction name"
+                android:text="اسم"
                 android:textColor="#000000"
                 android:textSize="15dp" />
             <TextView
@@ -36,7 +38,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_below="@+id/name"
                 android:layout_toRightOf="@id/image"
-                android:text="category"
+                android:text="المرور"
                 android:textColor="#000000"
                 android:textSize="15dp" />
             <TextView
@@ -46,7 +48,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="40dp"
                 android:layout_toRightOf="@+id/category"
-                android:text="status"
+                android:text="نشط"
                 android:textColor="#000000"
                 android:textSize="15dp" />
 

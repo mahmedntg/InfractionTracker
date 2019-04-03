@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/bg"
     tools:context="com.example.khalifa.infractiontracker.CreateGroupActivity">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

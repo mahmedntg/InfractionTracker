@@ -3,7 +3,10 @@ package com.example.khalifa.infractiontracker.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +17,7 @@ import com.example.khalifa.infractiontracker.InfractionDetailsActivity;
 import com.example.khalifa.infractiontracker.R;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -93,7 +97,19 @@ public class InfractionAdapter extends RecyclerView.Adapter<InfractionAdapter.St
         public void setImage(Context ctx, String image) {
             ImageView imageView = (ImageView) mView.findViewById(R.id.image);
             imageView.setOnClickListener(this);
-            Picasso.with(ctx).load(image).into(imageView);
+
+            if (!image.contains("http")) {
+                try {
+                    Bitmap imageBitmap = SharedUtils.decodeFromFirebaseBase64(image);
+                    imageView.setImageBitmap(imageBitmap);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+
+                Picasso.with(ctx).load(image).into(imageView);
+            }
+
         }
 
 
@@ -105,5 +121,7 @@ public class InfractionAdapter extends RecyclerView.Adapter<InfractionAdapter.St
         }
 
     }
+
+
 
 }
