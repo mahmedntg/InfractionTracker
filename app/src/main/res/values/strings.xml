@@ -3,4 +3,5 @@
     <string name="select_category">اختر الإدارة</string>
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
+    <string name="all">الكل</string>
 </resources>

@@ -15,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -45,6 +47,7 @@ public class InfractionActivity extends AppCompatActivity implements ValueEventL
     private Spinner categorySpinner;
     List<String> categoryList = new ArrayList<>();
     private String categoryName;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +64,7 @@ public class InfractionActivity extends AppCompatActivity implements ValueEventL
                 android.R.layout.simple_spinner_item, categoryList);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categorySpinner.setAdapter(dataAdapter);
-        categoryList.add("All");
+        categoryList.add(getString(R.string.all));
         DatabaseReference categoryRef = FirebaseDatabase.getInstance().getReference(Reference.CATEGORY);
         categoryRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -79,7 +82,7 @@ public class InfractionActivity extends AppCompatActivity implements ValueEventL
         });
         categorySpinner.setOnItemSelectedListener(this);
         infractionList = new ArrayList<>();
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.myRecyclerView);
+         recyclerView = (RecyclerView) findViewById(R.id.myRecyclerView);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -87,7 +90,7 @@ public class InfractionActivity extends AppCompatActivity implements ValueEventL
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter = new InfractionAdapter(infractionList, InfractionActivity.this);
         recyclerView.setAdapter(mAdapter);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         String email = firebaseAuth.getCurrentUser().getEmail();
         if (!email.equals(SharedUtils.email)) {
             fab.setVisibility(View.VISIBLE);
@@ -100,17 +103,29 @@ public class InfractionActivity extends AppCompatActivity implements ValueEventL
                 startActivity(newIntent);
             }
         });
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0 && fab.getVisibility() == View.VISIBLE) {
+                    fab.hide();
+                } else if (dy < 0 && fab.getVisibility() != View.VISIBLE) {
+                    fab.show();
+                }
+            }
+        });
     }
 
     private void displayInfractions() {
         Query infractionsQuery = databaseReference;
         if (adminUser) {
-            if (!categoryName.equalsIgnoreCase("all")) {
+            if (!categoryName.equalsIgnoreCase(getString(R.string.all))) {
                 infractionsQuery = databaseReference.orderByChild("category").equalTo(categoryName);
             }
         } else {
             infractionsQuery = databaseReference.orderByChild("userId").equalTo(firebaseAuth.getCurrentUser().getUid());
-            if (!categoryName.equalsIgnoreCase("all")) {
+            if (!categoryName.equalsIgnoreCase(getString(R.string.all))) {
                 infractionsQuery = databaseReference.orderByChild("userid_category").equalTo(firebaseAuth.getCurrentUser().getUid() + "__" + categoryName);
             }
         }
@@ -133,7 +148,7 @@ public class InfractionActivity extends AppCompatActivity implements ValueEventL
         switch (item.getItemId()) {
             case R.id.signOutItemMenu:
                 firebaseAuth.signOut();
-                startActivity(new Intent(this, LoginActivity.class));
+                startActivity(new Intent(this, MainActivity.class));
                 return true;
             case R.id.GroupItemMenu:
                 startActivity(new Intent(this, GroupActivity.class));
@@ -159,8 +174,14 @@ public class InfractionActivity extends AppCompatActivity implements ValueEventL
                 infractionList.add(infraction);
             }
         }
+        LayoutAnimationController layout_animation =
+                AnimationUtils.loadLayoutAnimation(getApplicationContext(), R.anim.layout_animation);
+
+        recyclerView.setLayoutAnimation(layout_animation);
         mAdapter.notifyDataSetChanged();
+        recyclerView.scheduleLayoutAnimation();
         progressDialog.hide();
+
     }
 
     @Override
@@ -178,7 +199,7 @@ public class InfractionActivity extends AppCompatActivity implements ValueEventL
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        categoryName = "all";
+        categoryName = getString(R.string.all);
         displayInfractions();
     }
 

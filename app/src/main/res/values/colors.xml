@@ -9,4 +9,7 @@
     <color name="gray_lite">#649f9f9f</color>
     <color name="bg_gray">#e6e6e5</color>
     <color name="bg">#70C6EE</color>
+    <color name="transparent">#00000000</color>
+    <color name="view_line">#F7F7F9</color>
+    <color name="backgroundEditText">#5cffffff</color>
 </resources>

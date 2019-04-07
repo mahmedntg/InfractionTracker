@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -36,7 +37,7 @@ public class InfractionDetailsActivity extends AppCompatActivity implements View
     private ImageView imageView;
     private TextView descriptionTV, userNameTV, userEmailTV, userPhoneTV, commentTV, solutionTV;
     private EditText commentET;
-    private CardView approve, reject, openLocation;
+    private Button approve, reject, openLocation;
     private FirebaseAuth firebaseAuth;
     private ProgressDialog progressDialog;
     int fromYear, fromMonth, fromDay;
@@ -98,13 +99,14 @@ public class InfractionDetailsActivity extends AppCompatActivity implements View
             reject.setVisibility(View.VISIBLE);
             approve.setOnClickListener(this);
             reject.setOnClickListener(this);
-            findViewById(R.id.commentTVCV).setVisibility(View.GONE);
+            commentTV.setVisibility(View.GONE);
 
         } else {
-            findViewById(R.id.commentETCV).setVisibility(View.GONE);
-            findViewById(R.id.userNameCV).setVisibility(View.GONE);
-            findViewById(R.id.userEmailCV).setVisibility(View.GONE);
-            findViewById(R.id.userPhoneCV).setVisibility(View.GONE);
+            commentET.setVisibility(View.GONE);
+            findViewById(R.id.commentView).setVisibility(View.GONE);
+            userNameTV.setVisibility(View.GONE);
+            userEmailTV.setVisibility(View.GONE);
+            userPhoneTV.setVisibility(View.GONE);
             if (infraction.getAdminComment() == null || infraction.getAdminComment().equals("")) {
                 commentTV.setVisibility(View.GONE);
             }

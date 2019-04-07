@@ -79,7 +79,7 @@ public class RegisterActivity extends AppCompatActivity {
                     DatabaseReference ref = databaseReference.child(userId);
                     User user = new User(name, email, phone);
                     ref.setValue(user);
-                    startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                    startActivity(new Intent(RegisterActivity.this, MainActivity.class));
                 } else {
                     alertDialog.setMessage(task.getException().getMessage());
                     alertDialog.show();

@@ -15,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
@@ -42,6 +44,7 @@ public class GroupActivity extends AppCompatActivity implements ValueEventListen
     private GroupAdapter mAdapter;
     private ProgressDialog progressDialog;
     private boolean adminUser = true;
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +57,7 @@ public class GroupActivity extends AppCompatActivity implements ValueEventListen
         progressDialog.show();
         databaseReference = FirebaseDatabase.getInstance().getReference(Reference.GROUPS);
         groupList = new ArrayList<>();
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.myRecyclerView);
+        recyclerView = (RecyclerView) findViewById(R.id.myRecyclerView);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -62,11 +65,24 @@ public class GroupActivity extends AppCompatActivity implements ValueEventListen
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter = new GroupAdapter(groupList, GroupActivity.this);
         recyclerView.setAdapter(mAdapter);
+        final FloatingActionButton floatingActionButton = findViewById(R.id.fab);
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent newIntent = new Intent(GroupActivity.this, CreateGroupActivity.class);
                 startActivity(newIntent);
+            }
+        });
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0 && floatingActionButton.getVisibility() == View.VISIBLE) {
+                    floatingActionButton.hide();
+                } else if (dy < 0 && floatingActionButton.getVisibility() != View.VISIBLE) {
+                    floatingActionButton.show();
+                }
             }
         });
     }
@@ -92,7 +108,12 @@ public class GroupActivity extends AppCompatActivity implements ValueEventListen
             groupList.add(group);
 
         }
+        LayoutAnimationController layout_animation =
+                AnimationUtils.loadLayoutAnimation(getApplicationContext(), R.anim.layout_animation);
+
+        recyclerView.setLayoutAnimation(layout_animation);
         mAdapter.notifyDataSetChanged();
+        recyclerView.scheduleLayoutAnimation();
         progressDialog.hide();
     }
 
@@ -115,8 +136,10 @@ public class GroupActivity extends AppCompatActivity implements ValueEventListen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.signOutItemMenu:
-                firebaseAuth.signOut();
-                startActivity(new Intent(this, LoginActivity.class));
+                if (firebaseAuth != null) {
+                    firebaseAuth.signOut();
+                }
+                startActivity(new Intent(this, MainActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

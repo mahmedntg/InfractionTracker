@@ -56,7 +56,7 @@ public class APICall implements Callback<NoteRes> {
         @Override
         public okhttp3.Response intercept(Interceptor.Chain chain) throws IOException {
             Request originalRequest = chain.request();
-            Request.Builder builder = originalRequest.newBuilder().header("Authorization", "key=AIzaSyAhDSTxTk1Cwc_-mL-Hgh9DqWTZH2y0mPk");
+            Request.Builder builder = originalRequest.newBuilder().header("Authorization", "key=AIzaSyBtY2iCt3FQwyQXecjvBuIdBmnE1dpFex8");
             Request newRequest = builder.build();
             return chain.proceed(newRequest);
         }

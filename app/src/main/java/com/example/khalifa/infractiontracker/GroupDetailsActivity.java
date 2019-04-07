@@ -71,7 +71,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements ValueEven
         descriptionTV = findViewById(R.id.description);
         Bundle extras = getIntent().getExtras();
         group = (Group) extras.get("group");
-        descriptionTV.setText("Description: " + group.getDescription());
+        descriptionTV.setText(group.getDescription());
         Picasso.with(this).load(group.getImage()).into(imageView);
         firebaseAuth.getCurrentUser().getUid();
         database = FirebaseDatabase.getInstance();
@@ -156,7 +156,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements ValueEven
         switch (item.getItemId()) {
             case R.id.signOutItemMenu:
                 firebaseAuth.signOut();
-                startActivity(new Intent(this, LoginActivity.class));
+                startActivity(new Intent(this, MainActivity.class));
                 return true;
             case R.id.joinInGroupItemMenu:
                 joinGroup();
@@ -195,7 +195,7 @@ public class GroupDetailsActivity extends AppCompatActivity implements ValueEven
         // Set Custom Title
         TextView title = new TextView(this);
         // Title Properties
-        title.setText("Group Notification");
+        title.setText("Send Group Notification");
         title.setPadding(10, 10, 10, 10);   // Set Position
         title.setGravity(Gravity.CENTER);
         title.setTextColor(Color.BLACK);

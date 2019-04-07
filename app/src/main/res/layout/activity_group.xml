@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:layoutAnimation="@anim/layout_animation"
         android:scrollbars="vertical"></android.support.v7.widget.RecyclerView>
 
     <android.support.design.widget.FloatingActionButton
@@ -21,8 +22,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right|end"
         android:layout_margin="16dp"
-        app:backgroundTint="@color/bg_gray"
         android:src="@mipmap/add"
+        app:backgroundTint="@color/bg_gray"
         app:elevation="6dp"
         app:pressedTranslationZ="12dp" />
 

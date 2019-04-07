@@ -68,7 +68,7 @@ public class AddInfractionActivity extends AppCompatActivity {
         solutionET = (EditText) findViewById(R.id.solution);
         categorySpinner = (Spinner) findViewById(R.id.category);
         final ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, categoryList);
+                R.layout.item_spinner, categoryList);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categorySpinner.setAdapter(dataAdapter);
         categoryRef.addValueEventListener(new ValueEventListener() {
