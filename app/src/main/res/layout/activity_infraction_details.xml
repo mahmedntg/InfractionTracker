@@ -106,19 +106,6 @@
                         android:textColorHint="@color/white"
                         android:textSize="@dimen/text_18" />
 
-                    <TextView
-                        android:id="@+id/user_phone"
-                        style="@style/Font_family_light"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/transparent"
-                        android:drawablePadding="@dimen/padding_8"
-                        android:inputType="textMultiLine"
-                        android:padding="@dimen/padding_16"
-                        android:textColor="@color/white"
-                        android:textColorHint="@color/white"
-                        android:textSize="@dimen/text_18" />
-
                     <EditText
                         android:id="@+id/commentET"
                         style="@style/Font_family_light"

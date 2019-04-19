@@ -35,7 +35,7 @@ import java.util.Map;
 
 public class InfractionDetailsActivity extends AppCompatActivity implements View.OnClickListener, ValueEventListener {
     private ImageView imageView;
-    private TextView descriptionTV, userNameTV, userEmailTV, userPhoneTV, commentTV, solutionTV;
+    private TextView descriptionTV, userNameTV, userEmailTV, commentTV, solutionTV;
     private EditText commentET;
     private Button approve, reject, openLocation;
     private FirebaseAuth firebaseAuth;
@@ -51,11 +51,13 @@ public class InfractionDetailsActivity extends AppCompatActivity implements View
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_infraction_details);
+        Bundle extras = getIntent().getExtras();
+        infraction = (Infraction) extras.get("infraction");
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         databaseReference = database.getReference(Reference.INFRACTIONS);
         DatabaseReference userReference = database.getReference(Reference.USERS);
-        userReference.child(firebaseAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(this);
+        userReference.child(infraction.getUserId()).addListenerForSingleValueEvent(this);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading...");
         progressDialog.setCancelable(false);
@@ -63,7 +65,6 @@ public class InfractionDetailsActivity extends AppCompatActivity implements View
 
         imageView = findViewById(R.id.image);
         userEmailTV = findViewById(R.id.user_email);
-        userPhoneTV = findViewById(R.id.user_phone);
         userNameTV = findViewById(R.id.user_name);
         descriptionTV = findViewById(R.id.description);
         solutionTV = findViewById(R.id.solution);
@@ -74,8 +75,6 @@ public class InfractionDetailsActivity extends AppCompatActivity implements View
         openLocation = findViewById(R.id.openLocation);
         openLocation.setOnClickListener(this);
 
-        Bundle extras = getIntent().getExtras();
-        infraction = (Infraction) extras.get("infraction");
         solutionTV.setText("Solution: " + infraction.getSolution());
         descriptionTV.setText("Description: " + infraction.getDescription());
 
@@ -106,7 +105,6 @@ public class InfractionDetailsActivity extends AppCompatActivity implements View
             findViewById(R.id.commentView).setVisibility(View.GONE);
             userNameTV.setVisibility(View.GONE);
             userEmailTV.setVisibility(View.GONE);
-            userPhoneTV.setVisibility(View.GONE);
             if (infraction.getAdminComment() == null || infraction.getAdminComment().equals("")) {
                 commentTV.setVisibility(View.GONE);
             }
@@ -158,7 +156,6 @@ public class InfractionDetailsActivity extends AppCompatActivity implements View
         user = dataSnapshot.getValue(User.class);
         userNameTV.setText("user Name: " + user.getName());
         userEmailTV.setText("user Email: " + user.getEmail());
-        userPhoneTV.setText("user Phone: " + user.getPhone());
         progressDialog.hide();
     }
 
